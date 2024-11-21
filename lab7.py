@@ -1,85 +1,71 @@
-#створюємо базовий клас обробник для переказів
+# Базовий клас обробника для переказів
 class transfer_handler:
-    def __init__(self,next_handler = None):
+    def __init__(self, next_handler=None):
         self.next_handler = next_handler
 
-    def handle(self,transfer):
-        #якщо обробник не може обробити запит передаємо його настпному обробнику
+    def handle(self, transfer):
+        # Якщо обробник не може обробити запит, передаємо його наступному обробнику
         if self.next_handler:
             self.next_handler.handle(transfer)
 
 
-#створюємо дочірній класс обробник для банківського переказу
+# Дочірній клас обробник для банківського переказу
 class bank_transfer_handler(transfer_handler):
-    def handle (self,transfer):
-        if transfer['metod']=='bank':
-              print(f"успішно! виконано переказ через банківський переказ на суму: {transfer['amount']}")
-
+    def handle(self, transfer):
+        if 100 < transfer['sum'] < 1000:
+            print(f"Успішно! Виконано переказ через банківський переказ на суму: {transfer['sum']}")
         else:
-             super().handle(transfer)
+            super().handle(transfer)
 
-#cтворюємо дочірній клас обробник для переказу по western-uninon 
-class western_union_transter_handle(transfer_handler):
-    def handle (self,transfer):
-        if transfer['metod']=='Wester Union':
-              print(f"успішно! виконано переказ через Western Union на суму: {transfer['amount']}")
 
+# Дочірній клас обробник для переказу по Western Union
+class western_union_transfer_handler(transfer_handler):
+    def handle(self, transfer):
+        if 1000 < transfer['sum'] < 10000:
+            print(f"Успішно! Виконано переказ через Western Union на суму: {transfer['sum']}")
         else:
-             super().handle(transfer)
+            super().handle(transfer)
 
-#створюємо дочірній клас обробник для переказу по Pay Pal
-class pay_pal_transter_handle(transfer_handler):
-    def handle (self,transfer):
-        if transfer['metod']=='Pay Pal':
-              print(f"успішно! виконано переказ через Western Union на суму: {transfer['amount']}")
 
+# Дочірній клас обробник для переказу по PayPal
+class pay_pal_transfer_handler(transfer_handler):
+    def handle(self, transfer):
+        if 10000 < transfer['sum'] < 100000:
+            print(f"Успішно! Виконано переказ через PayPal на суму: {transfer['sum']}")
         else:
-             super().handle(transfer)
+            super().handle(transfer)
 
-#створення класу для системи переказів
+
+# Створення класу для системи переказів
 class Transfer_System:
     def __init__(self):
-        #ланцюгпередання 
-        self.handler_chain= bank_transfer_handler(
-            western_union_transter_handle(pay_pal_transter_handle())
+        # Ланцюг передавання
+        self.handler_chain = bank_transfer_handler(
+            western_union_transfer_handler(
+                pay_pal_transfer_handler()
+            )
         )
 
-    def make_transfer(self,amount,method):
-        transfer = {'amount':amount,'metod':method}
+    def make_transfer(self, sum):
+        transfer = {'sum': sum}
         # Починаємо обробку переказу через ланцюг
         self.handler_chain.handle(transfer)
 
+
 def enter_sum():
-    sum = int(input("введіть суму: "))
+    sum = int(input("Введіть суму: "))
     return sum
 
 
 def enter_method():
-    print("1.Pay Pal")
-    print("2.Wester Union")
-    print("3.bank")
-    print("4.Exit")
-    method = int(input("введіть номер системи яку бажаєте викристати: "))
+    sum = enter_sum()
+    
     transfer_system = Transfer_System()
-
-    if method == 1:
-        sum = enter_sum()
-        transfer_system.make_transfer(sum, 'Pay Pal')
-    elif method == 2:
-        sum = enter_sum()
-        transfer_system.make_transfer(sum, 'Wester Union')
-    elif method == 3:
-        sum = enter_sum()
-        transfer_system.make_transfer(sum, 'bank')
-    elif method == 4:
-        print("Exit")
-        exit()
-    else:
-        print("wrong choice")
+    transfer_system.make_transfer(sum)
 
 
 def main():
-    card_number = int(input("введіть номер карти отримувача: "))
+    card_number = int(input("Введіть номер карти отримувача: "))
     enter_method()
 
 
