@@ -66,6 +66,9 @@ def enter_method():
 
 def main():
     card_number = int(input("Введіть номер карти отримувача: "))
+    while len(card_number) != 16 or card_number.isalpha():
+        print("номер картки введено не вірно(недостатньо літер або присутні символи при введенні)")
+        card_number = int(input("Введіть номер картки отримувача:"))
     enter_method()
 
 
